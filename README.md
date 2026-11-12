@@ -38,6 +38,7 @@ Yêu cầu: **.NET 8 SDK**, **SQL Server** (Express/Developer/LocalDB), Visual S
 | Tên đăng nhập | Vai trò | Dùng ở |
 |---|---|---|
 | `khachhang` | Khách hàng | Web |
+| `khachhang2` | Khách hàng | Web |
 | `admin` | Quản trị viên | Desktop |
 | `nvbanhang` | Nhân viên bán hàng | Desktop |
 | `nvkho` | Nhân viên kho | Desktop |
@@ -76,8 +77,11 @@ Lab08–09 (trang quản trị) được chuyển sang ứng dụng **Desktop Wi
 Khách đặt hàng trên Web (đơn ở trạng thái *Chờ xác nhận*, tồn kho bị trừ) → nhân viên bán hàng xác nhận /
 giao / hoàn thành đơn trên Desktop → khách xem trạng thái đơn cập nhật trên trang *Đơn hàng của tôi*.
 
-## Phân công
+## Thành viên
 
-| Thành viên | MSSV | Phần phụ trách |
-|---|---|---|
-| Lương Diệu Quang (nhóm trưởng) | 3124411246 | *(cập nhật)* |
+| Thành viên | MSSV |
+|---|---|
+| Lương Diệu Quang (nhóm trưởng) | 3124411246 |
+| Đàm Gia Khang                  | 3124411121 |
+| Nguyễn Đạt Mạnh                | 3124411162 |
+| Phạm Quốc Trung                | 3124411329 |
