@@ -1,0 +1,12 @@
+=== Ô 1 (tiêu đề commit) ===
+Domain: các enum nghiệp vụ và tên hiển thị tiếng Việt
+
+=== Ô 2 (mô tả) ===
+- Enum VaiTro, TrangThaiDonHang, TrangThaiThanhToan, LoaiPhieuKho
+- PhuongThuc: phương thức thanh toán (COD, chuyển khoản, MoMo)
+- TenHienThi: extension .Ten() trả về tên tiếng Việt để hiển thị trên Web và Desktop
+
+=== Danh sách file (M = sửa file có sẵn, A = file mới) ===
+A	src/BookStore.Domain/Enums/Enums.cs
+A	src/BookStore.Domain/Enums/PhuongThuc.cs
+A	src/BookStore.Domain/Enums/TenHienThi.cs
