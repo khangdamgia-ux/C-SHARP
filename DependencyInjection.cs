@@ -1,18 +1,15 @@
-using BookStore.Application.Common;
-using BookStore.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+using BookStore.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BookStore.Infrastructure;
+namespace BookStore.Application;
 
 public static class DependencyInjection
 {
-    /// <summary>Đăng ký DbContext dùng chung cho Web và Desktop.</summary>
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, string connectionString)
+    /// <summary>Đăng ký toàn bộ service nghiệp vụ – Web và Desktop gọi cùng một hàm nên luôn dùng chung quy tắc.</summary>
+    public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddDbContext<BookStoreDbContext>(o => o.UseSqlServer(connectionString,
-            sql => sql.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null)));
-        services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<BookStoreDbContext>());
+        services.AddScoped<ITaiKhoanService, TaiKhoanService>();
+        services.AddScoped<ISachService, SachService>();
         return services;
     }
 }
