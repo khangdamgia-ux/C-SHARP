@@ -1,5 +1,7 @@
+using System.Globalization;
 using BookStore.Application;
 using BookStore.Infrastructure;
+using Microsoft.AspNetCore.Localization;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,12 +20,30 @@ builder.Services.AddInfrastructure(builder.Configuration.GetConnectionString("Bo
     ?? throw new InvalidOperationException("Thiếu chuỗi kết nối 'BookStoreDB' trong appsettings.json"));
 builder.Services.AddApplication();
 
-builder.Services.AddControllersWithViews();
+// Mọi form POST đều phải kèm anti-forgery token (chống tấn công CSRF)
+builder.Services.AddControllersWithViews(o =>
+    o.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute()));
 
 var app = builder.Build();
 
 // Tạo/cập nhật CSDL theo migration và nạp dữ liệu mẫu khi chạy lần đầu
 await app.Services.KhoiTaoCsdlAsync();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Loi");
+    app.UseHsts();
+}
+app.UseStatusCodePagesWithReExecute("/Loi/{0}");
+
+// Định dạng số, tiền tệ, ngày theo tiếng Việt (45.000 đ, 05/11/2026)
+var vi = new CultureInfo("vi-VN");
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(vi),
+    SupportedCultures = new[] { vi },
+    SupportedUICultures = new[] { vi }
+});
 
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
