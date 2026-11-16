@@ -1,0 +1,29 @@
+@* Thẻ hiển thị một cuốn sách trên lưới – dùng chung cho trang chủ, danh sách và "sách cùng danh mục" *@
+@model SachTomTatDto
+<div class="card book-card h-100">
+    <a asp-controller="Sach" asp-action="ChiTiet" asp-route-id="@Model.MaSach" class="cover">
+        <img src="@(Model.HinhAnh ?? "/images/no-cover.svg")" alt="Bìa sách @Model.TenSach" loading="lazy" />
+        @if (Model.SoLuongTon == 0)
+        {
+            <span class="badge bg-secondary position-absolute top-0 end-0 m-2">Hết hàng</span>
+        }
+    </a>
+    <div class="card-body d-flex flex-column p-3">
+        <a asp-controller="Sach" asp-action="ChiTiet" asp-route-id="@Model.MaSach" class="title">@Model.TenSach</a>
+        <div class="small text-muted mb-2 text-truncate">@Model.TacGia</div>
+        <div class="mt-auto d-flex justify-content-between align-items-center">
+            <span class="price">@Model.DonGia.ToString("N0") đ</span>
+            @if (Model.SoLuongTon > 0)
+            {
+                @* Thêm nhanh 1 cuốn vào giỏ, sau đó quay lại đúng trang đang xem *@
+                <form method="post" asp-controller="GioHang" asp-action="Them">
+                    <input type="hidden" name="maSach" value="@Model.MaSach" />
+                    <input type="hidden" name="returnUrl" value="@(Context.Request.Path + Context.Request.QueryString)" />
+                    <button type="submit" class="btn btn-sm btn-outline-gold" title="Thêm vào giỏ" aria-label="Thêm “@Model.TenSach” vào giỏ">
+                        <i class="bi bi-cart-plus"></i>
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+</div>
