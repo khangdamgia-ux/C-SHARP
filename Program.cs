@@ -1,68 +1,81 @@
-using System.Globalization;
 using BookStore.Application;
+using BookStore.Desktop.Forms;
+using BookStore.Desktop.HaTang;
 using BookStore.Infrastructure;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace BookStore.Desktop;
 
-// Cấu hình riêng của từng máy (chuỗi kết nối...), KHÔNG đưa lên Git – xem README
-builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
-
-// Ghi log ra console và file logs/web-<ngày>.log (mục 4.5 – Thiết kế thích ứng)
-builder.Host.UseSerilog((ctx, cfg) => cfg
-    .ReadFrom.Configuration(ctx.Configuration)
-    .WriteTo.Console()
-    .WriteTo.File("logs/web-.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 14));
-
-// Tầng hạ tầng (EF Core + SQL Server) và tầng nghiệp vụ
-builder.Services.AddInfrastructure(builder.Configuration.GetConnectionString("BookStoreDB")
-    ?? throw new InvalidOperationException("Thiếu chuỗi kết nối 'BookStoreDB' trong appsettings.json"));
-builder.Services.AddApplication();
-
-// Đăng nhập bằng cookie (thay Session["Taikhoan"] của Lab04)
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(o =>
+internal static class Program
+{
+    [STAThread]
+    private static void Main()
     {
-        o.LoginPath = "/TaiKhoan/DangNhap";
-        o.AccessDeniedPath = "/Loi/403";
-        o.ExpireTimeSpan = TimeSpan.FromDays(7);
-        o.SlidingExpiration = true;
-    });
+        ApplicationConfiguration.Initialize();
 
-// Mọi form POST đều phải kèm anti-forgery token (chống tấn công CSRF)
-builder.Services.AddControllersWithViews(o =>
-    o.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute()));
+        // ---- Cấu hình và DI (giống Program.cs của Web) ----
+        var builder = Host.CreateApplicationBuilder(new HostApplicationBuilderSettings
+        {
+            ContentRootPath = AppContext.BaseDirectory
+        });
+        // Cấu hình riêng của từng máy (chuỗi kết nối...), KHÔNG đưa lên Git – xem README
+        builder.Configuration.AddJsonFile(Path.Combine(AppContext.BaseDirectory, "appsettings.Local.json"), optional: true);
 
-var app = builder.Build();
+        builder.Services.AddSerilog(cfg => cfg
+            .ReadFrom.Configuration(builder.Configuration)
+            .WriteTo.File(Path.Combine(AppContext.BaseDirectory, "logs", "desktop-.log"),
+                rollingInterval: RollingInterval.Day, retainedFileCountLimit: 14));
 
-// Tạo/cập nhật CSDL theo migration và nạp dữ liệu mẫu khi chạy lần đầu
-await app.Services.KhoiTaoCsdlAsync();
+        builder.Services.AddInfrastructure(builder.Configuration.GetConnectionString("BookStoreDB")
+            ?? throw new InvalidOperationException("Thiếu chuỗi kết nối 'BookStoreDB' trong appsettings.json"));
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Loi");
-    app.UseHsts();
+        // Service nghiệp vụ dùng chung với Web (BookStore.Application)
+        builder.Services.AddApplication();
+
+        builder.Services.AddSingleton<PhienDangNhap>();
+        builder.Services.AddSingleton<IFormFactory, FormFactory>();
+
+        // Form: đăng ký Transient – mỗi lần mở là một đối tượng mới, nhận service qua constructor.
+        // Thêm form mới: đăng ký ở đây rồi gắn vào menu trong FrmChinh (xem docs/HUONG_DAN_DESKTOP.md).
+        builder.Services.AddTransient<FrmDangNhap>();
+        builder.Services.AddTransient<FrmChinh>();
+        builder.Services.AddTransient<FrmTacGia>();
+
+        using var host = builder.Build();
+        var log = host.Services.GetRequiredService<ILoggerFactory>().CreateLogger("BookStore.Desktop");
+        XuLyLoi.DangKy(log);
+
+        // ---- Kết nối và khởi tạo CSDL ----
+        try
+        {
+            host.Services.KhoiTaoCsdlAsync().GetAwaiter().GetResult();
+        }
+        catch (Exception ex)
+        {
+            log.LogCritical(ex, "Không kết nối được CSDL");
+            ThongBao.Loi("Không kết nối được CSDL BookStoreDB.\nHãy kiểm tra SQL Server và chuỗi kết nối trong appsettings.json.\n\n" + ex.Message);
+            return;
+        }
+
+        // ---- Vòng đăng nhập: đăng xuất thì quay lại màn hình đăng nhập ----
+        var forms = host.Services.GetRequiredService<IFormFactory>();
+        var phien = host.Services.GetRequiredService<PhienDangNhap>();
+        while (true)
+        {
+            using (var dangNhap = forms.Tao<FrmDangNhap>())
+            {
+                if (dangNhap.ShowDialog() != DialogResult.OK) break;
+            }
+
+            using var chinh = forms.Tao<FrmChinh>();
+            System.Windows.Forms.Application.Run(chinh);
+            if (!chinh.DaDangXuat) break;
+            phien.DangXuat();
+        }
+        Log.CloseAndFlush();
+    }
 }
-app.UseStatusCodePagesWithReExecute("/Loi/{0}");
-
-// Định dạng số, tiền tệ, ngày theo tiếng Việt (45.000 đ, 05/11/2026)
-var vi = new CultureInfo("vi-VN");
-app.UseRequestLocalization(new RequestLocalizationOptions
-{
-    DefaultRequestCulture = new RequestCulture(vi),
-    SupportedCultures = new[] { vi },
-    SupportedUICultures = new[] { vi }
-});
-
-app.UseSerilogRequestLogging();
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.Run();
