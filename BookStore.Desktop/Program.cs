@@ -1,4 +1,5 @@
 using BookStore.Application;
+using BookStore.Desktop.Forms;
 using BookStore.Desktop.HaTang;
 using BookStore.Infrastructure;
 using Microsoft.Extensions.Configuration;
@@ -38,6 +39,9 @@ internal static class Program
         builder.Services.AddSingleton<PhienDangNhap>();
         builder.Services.AddSingleton<IFormFactory, FormFactory>();
 
+        // Form: đăng ký Transient – mỗi lần mở là một đối tượng mới, nhận service qua constructor.
+        // Thêm form mới: đăng ký ở đây rồi gắn vào menu trong FrmChinh (xem docs/HUONG_DAN_DESKTOP.md).
+        builder.Services.AddTransient<FrmDangNhap>();
 
         using var host = builder.Build();
         var log = host.Services.GetRequiredService<ILoggerFactory>().CreateLogger("BookStore.Desktop");
@@ -55,8 +59,13 @@ internal static class Program
             return;
         }
 
-        // ---- Tạm thời: báo kết nối CSDL thành công (màn hình đăng nhập làm ở commit sau) ----
-        ThongBao.ThanhCong("Kết nối CSDL BookStoreDB thành công.");
+        // ---- Đăng nhập (form chính MDI làm ở commit sau) ----
+        var forms = host.Services.GetRequiredService<IFormFactory>();
+        using (var dangNhap = forms.Tao<FrmDangNhap>())
+        {
+            if (dangNhap.ShowDialog() == DialogResult.OK)
+                ThongBao.ThanhCong("Đăng nhập thành công.");
+        }
         Log.CloseAndFlush();
     }
 }
