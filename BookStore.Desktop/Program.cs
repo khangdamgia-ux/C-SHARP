@@ -42,6 +42,7 @@ internal static class Program
         // Form: đăng ký Transient – mỗi lần mở là một đối tượng mới, nhận service qua constructor.
         // Thêm form mới: đăng ký ở đây rồi gắn vào menu trong FrmChinh (xem docs/HUONG_DAN_DESKTOP.md).
         builder.Services.AddTransient<FrmDangNhap>();
+        builder.Services.AddTransient<FrmChinh>();
 
         using var host = builder.Build();
         var log = host.Services.GetRequiredService<ILoggerFactory>().CreateLogger("BookStore.Desktop");
@@ -59,12 +60,20 @@ internal static class Program
             return;
         }
 
-        // ---- Đăng nhập (form chính MDI làm ở commit sau) ----
+        // ---- Vòng đăng nhập: đăng xuất thì quay lại màn hình đăng nhập ----
         var forms = host.Services.GetRequiredService<IFormFactory>();
-        using (var dangNhap = forms.Tao<FrmDangNhap>())
+        var phien = host.Services.GetRequiredService<PhienDangNhap>();
+        while (true)
         {
-            if (dangNhap.ShowDialog() == DialogResult.OK)
-                ThongBao.ThanhCong("Đăng nhập thành công.");
+            using (var dangNhap = forms.Tao<FrmDangNhap>())
+            {
+                if (dangNhap.ShowDialog() != DialogResult.OK) break;
+            }
+
+            using var chinh = forms.Tao<FrmChinh>();
+            System.Windows.Forms.Application.Run(chinh);
+            if (!chinh.DaDangXuat) break;
+            phien.DangXuat();
         }
         Log.CloseAndFlush();
     }
