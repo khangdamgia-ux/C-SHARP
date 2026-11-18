@@ -200,7 +200,7 @@ public partial class FrmChinh : Form
 
     // ---------------------------------- Danh mục ----------------------------------
     private void mnuSach_Click(object sender, EventArgs e) => ChuaCo();
-    private void mnuDanhMucSach_Click(object sender, EventArgs e) => ChuaCo();
+    private void mnuDanhMucSach_Click(object sender, EventArgs e) => MoForm<FrmDanhMuc>();
     private void mnuNhaXuatBan_Click(object sender, EventArgs e) => ChuaCo();
     private void mnuTacGia_Click(object sender, EventArgs e) => MoForm<FrmTacGia>();
 
