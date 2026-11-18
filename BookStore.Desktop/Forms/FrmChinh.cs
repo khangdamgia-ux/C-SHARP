@@ -186,7 +186,8 @@ public partial class FrmChinh : Form
 
     private void mnuDoiMatKhau_Click(object sender, EventArgs e)
     {
-        ChuaCo();
+        using var f = _forms.Tao<FrmDoiMatKhau>();
+        f.ShowDialog(this);
     }
 
     private void mnuDangXuat_Click(object sender, EventArgs e)
@@ -206,7 +207,7 @@ public partial class FrmChinh : Form
 
     // ---------------------------------- Bán hàng ----------------------------------
     private void mnuDonHang_Click(object sender, EventArgs e) => MoForm<FrmDonHang>();
-    private void mnuKhachHang_Click(object sender, EventArgs e) => ChuaCo();
+    private void mnuKhachHang_Click(object sender, EventArgs e) => MoForm<FrmKhachHang>();
 
     // ------------------------------------ Kho ------------------------------------
     private void mnuPhieuKho_Click(object sender, EventArgs e) => ChuaCo();
