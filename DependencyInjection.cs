@@ -10,6 +10,9 @@ public static class DependencyInjection
     {
         services.AddScoped<ITaiKhoanService, TaiKhoanService>();
         services.AddScoped<ISachService, SachService>();
+        services.AddScoped<IDanhMucService, DanhMucService>();
+        services.AddScoped<IDonHangService, DonHangService>();
+        services.AddScoped<IKhachHangService, KhachHangService>();
         return services;
     }
 }
