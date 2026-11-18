@@ -45,6 +45,8 @@ internal static class Program
         builder.Services.AddTransient<FrmChinh>();
         builder.Services.AddTransient<FrmDanhMuc>();
         builder.Services.AddTransient<FrmTacGia>();
+        builder.Services.AddTransient<FrmDonHang>();
+        builder.Services.AddTransient<FrmKhachHang>();
 
         using var host = builder.Build();
         var log = host.Services.GetRequiredService<ILoggerFactory>().CreateLogger("BookStore.Desktop");

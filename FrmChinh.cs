@@ -175,7 +175,7 @@ public partial class FrmChinh : Form
 
     private void lblDonCho_Click(object? sender, EventArgs e)
     {
-        if (LaBanHang) ChuaCo();
+        if (LaBanHang) MoForm<FrmDonHang>();
     }
 
     /// <summary>Tạm thời cho các mục menu chưa làm xong.</summary>
@@ -205,8 +205,8 @@ public partial class FrmChinh : Form
     private void mnuTacGia_Click(object sender, EventArgs e) => MoForm<FrmTacGia>();
 
     // ---------------------------------- Bán hàng ----------------------------------
-    private void mnuDonHang_Click(object sender, EventArgs e) => ChuaCo();
-    private void mnuKhachHang_Click(object sender, EventArgs e) => ChuaCo();
+    private void mnuDonHang_Click(object sender, EventArgs e) => MoForm<FrmDonHang>();
+    private void mnuKhachHang_Click(object sender, EventArgs e) => MoForm<FrmKhachHang>();
 
     // ------------------------------------ Kho ------------------------------------
     private void mnuPhieuKho_Click(object sender, EventArgs e) => ChuaCo();
