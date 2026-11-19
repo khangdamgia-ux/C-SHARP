@@ -14,6 +14,7 @@ public static class DependencyInjection
         services.AddScoped<IDonHangService, DonHangService>();
         services.AddScoped<IKhachHangService, KhachHangService>();
         services.AddScoped<IKhoService, KhoService>();
+        services.AddScoped<IBaoCaoService, BaoCaoService>();
         return services;
     }
 }
