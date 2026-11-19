@@ -211,7 +211,7 @@ public partial class FrmChinh : Form
 
     // ------------------------------------ Kho ------------------------------------
     private void mnuPhieuKho_Click(object sender, EventArgs e) => ChuaCo();
-    private void mnuTonKho_Click(object sender, EventArgs e) => ChuaCo();
+    private void mnuTonKho_Click(object sender, EventArgs e) => MoForm<FrmKho>();
 
     // ----------------------------- Báo cáo, Quản trị -----------------------------
     private void mnuDoanhThu_Click(object sender, EventArgs e) => ChuaCo();
