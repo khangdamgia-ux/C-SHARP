@@ -38,6 +38,7 @@ internal static class Program
 
         builder.Services.AddSingleton<PhienDangNhap>();
         builder.Services.AddSingleton<IFormFactory, FormFactory>();
+        builder.Services.AddSingleton<AnhSach>();
 
         // Form: đăng ký Transient – mỗi lần mở là một đối tượng mới, nhận service qua constructor.
         // Thêm form mới: đăng ký ở đây rồi gắn vào menu trong FrmChinh (xem docs/HUONG_DAN_DESKTOP.md).
