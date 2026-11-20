@@ -50,6 +50,7 @@ internal static class Program
         builder.Services.AddTransient<FrmTacGia>();
         builder.Services.AddTransient<FrmDonHang>();
         builder.Services.AddTransient<FrmKhachHang>();
+        builder.Services.AddTransient<FrmPhieuKho>();
         builder.Services.AddTransient<FrmKho>();
         builder.Services.AddTransient<FrmTaiKhoan>();
 

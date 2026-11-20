@@ -210,7 +210,7 @@ public partial class FrmChinh : Form
     private void mnuKhachHang_Click(object sender, EventArgs e) => MoForm<FrmKhachHang>();
 
     // ------------------------------------ Kho ------------------------------------
-    private void mnuPhieuKho_Click(object sender, EventArgs e) => ChuaCo();
+    private void mnuPhieuKho_Click(object sender, EventArgs e) => MoForm<FrmPhieuKho>();
     private void mnuTonKho_Click(object sender, EventArgs e) => MoForm<FrmKho>();
 
     // ----------------------------- Báo cáo, Quản trị -----------------------------
