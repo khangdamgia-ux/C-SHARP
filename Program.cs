@@ -38,6 +38,7 @@ internal static class Program
 
         builder.Services.AddSingleton<PhienDangNhap>();
         builder.Services.AddSingleton<IFormFactory, FormFactory>();
+        builder.Services.AddSingleton<AnhSach>();
 
         // Form: đăng ký Transient – mỗi lần mở là một đối tượng mới, nhận service qua constructor.
         // Thêm form mới: đăng ký ở đây rồi gắn vào menu trong FrmChinh (xem docs/HUONG_DAN_DESKTOP.md).
@@ -49,7 +50,10 @@ internal static class Program
         builder.Services.AddTransient<FrmTacGia>();
         builder.Services.AddTransient<FrmDonHang>();
         builder.Services.AddTransient<FrmKhachHang>();
+        builder.Services.AddTransient<FrmPhieuKho>();
         builder.Services.AddTransient<FrmKho>();
+        builder.Services.AddTransient<FrmBaoCao>();
+        builder.Services.AddTransient<FrmTaiKhoan>();
 
         using var host = builder.Build();
         var log = host.Services.GetRequiredService<ILoggerFactory>().CreateLogger("BookStore.Desktop");
