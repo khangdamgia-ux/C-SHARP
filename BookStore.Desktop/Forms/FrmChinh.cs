@@ -162,7 +162,15 @@ public partial class FrmChinh : Form
 
     private void MoTongQuan()
     {
-        // Màn hình tổng quan (dashboard) làm sau khi có BaoCaoService
+        bool moiTao = !MdiChildren.OfType<FrmTongQuan>().Any();
+        var f = MoForm<FrmTongQuan>();
+        if (moiTao) f.YeuCauMoDon += MoDonHangAsync;
+    }
+
+    private async Task MoDonHangAsync(long maDon)
+    {
+        if (!LaBanHang) return;
+        await MoForm<FrmDonHang>().ChonDonAsync(maDon);
     }
 
     // ------------------------- Báo đơn mới từ website -------------------------
@@ -177,9 +185,6 @@ public partial class FrmChinh : Form
     {
         if (LaBanHang) MoForm<FrmDonHang>();
     }
-
-    /// <summary>Tạm thời cho các mục menu chưa làm xong.</summary>
-    private static void ChuaCo() => ThongBao.CanhBao("Chức năng đang được xây dựng.");
 
     // ---------------------------------- Hệ thống ----------------------------------
     private void mnuTongQuan_Click(object sender, EventArgs e) => MoTongQuan();
@@ -200,7 +205,7 @@ public partial class FrmChinh : Form
     private void mnuThoat_Click(object sender, EventArgs e) => Close();
 
     // ---------------------------------- Danh mục ----------------------------------
-    private void mnuSach_Click(object sender, EventArgs e) => ChuaCo();
+    private void mnuSach_Click(object sender, EventArgs e) => MoForm<FrmSach>();
     private void mnuDanhMucSach_Click(object sender, EventArgs e) => MoForm<FrmDanhMuc>();
     private void mnuNhaXuatBan_Click(object sender, EventArgs e) => MoForm<FrmNhaXuatBan>();
     private void mnuTacGia_Click(object sender, EventArgs e) => MoForm<FrmTacGia>();
@@ -214,7 +219,7 @@ public partial class FrmChinh : Form
     private void mnuTonKho_Click(object sender, EventArgs e) => MoForm<FrmKho>();
 
     // ----------------------------- Báo cáo, Quản trị -----------------------------
-    private void mnuDoanhThu_Click(object sender, EventArgs e) => ChuaCo();
+    private void mnuDoanhThu_Click(object sender, EventArgs e) => MoForm<FrmBaoCao>();
     private void mnuTaiKhoan_Click(object sender, EventArgs e) => MoForm<FrmTaiKhoan>();
 
     // ---------------------------------- Cửa sổ ----------------------------------

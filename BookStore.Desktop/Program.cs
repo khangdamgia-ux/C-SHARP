@@ -44,7 +44,9 @@ internal static class Program
         // Thêm form mới: đăng ký ở đây rồi gắn vào menu trong FrmChinh (xem docs/HUONG_DAN_DESKTOP.md).
         builder.Services.AddTransient<FrmDangNhap>();
         builder.Services.AddTransient<FrmChinh>();
+        builder.Services.AddTransient<FrmTongQuan>();
         builder.Services.AddTransient<FrmDoiMatKhau>();
+        builder.Services.AddTransient<FrmSach>();
         builder.Services.AddTransient<FrmDanhMuc>();
         builder.Services.AddTransient<FrmNhaXuatBan>();
         builder.Services.AddTransient<FrmTacGia>();
@@ -52,6 +54,7 @@ internal static class Program
         builder.Services.AddTransient<FrmKhachHang>();
         builder.Services.AddTransient<FrmPhieuKho>();
         builder.Services.AddTransient<FrmKho>();
+        builder.Services.AddTransient<FrmBaoCao>();
         builder.Services.AddTransient<FrmTaiKhoan>();
 
         using var host = builder.Build();
