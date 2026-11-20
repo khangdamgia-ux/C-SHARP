@@ -178,9 +178,6 @@ public partial class FrmChinh : Form
         if (LaBanHang) MoForm<FrmDonHang>();
     }
 
-    /// <summary>Tạm thời cho các mục menu chưa làm xong.</summary>
-    private static void ChuaCo() => ThongBao.CanhBao("Chức năng đang được xây dựng.");
-
     // ---------------------------------- Hệ thống ----------------------------------
     private void mnuTongQuan_Click(object sender, EventArgs e) => MoTongQuan();
 
@@ -200,7 +197,7 @@ public partial class FrmChinh : Form
     private void mnuThoat_Click(object sender, EventArgs e) => Close();
 
     // ---------------------------------- Danh mục ----------------------------------
-    private void mnuSach_Click(object sender, EventArgs e) => ChuaCo();
+    private void mnuSach_Click(object sender, EventArgs e) => MoForm<FrmSach>();
     private void mnuDanhMucSach_Click(object sender, EventArgs e) => MoForm<FrmDanhMuc>();
     private void mnuNhaXuatBan_Click(object sender, EventArgs e) => MoForm<FrmNhaXuatBan>();
     private void mnuTacGia_Click(object sender, EventArgs e) => MoForm<FrmTacGia>();

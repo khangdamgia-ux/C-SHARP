@@ -45,6 +45,7 @@ internal static class Program
         builder.Services.AddTransient<FrmDangNhap>();
         builder.Services.AddTransient<FrmChinh>();
         builder.Services.AddTransient<FrmDoiMatKhau>();
+        builder.Services.AddTransient<FrmSach>();
         builder.Services.AddTransient<FrmDanhMuc>();
         builder.Services.AddTransient<FrmNhaXuatBan>();
         builder.Services.AddTransient<FrmTacGia>();
