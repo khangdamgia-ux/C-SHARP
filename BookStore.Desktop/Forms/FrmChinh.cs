@@ -1,3 +1,4 @@
+using BookStore.Application.Services;
 using BookStore.Desktop.HaTang;
 using BookStore.Domain.Enums;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +34,7 @@ public partial class FrmChinh : Form
     private bool LaBanHang => _phien.CoQuyen(VaiTro.QuanTriVien, VaiTro.NhanVienBanHang);
     private bool LaKho => _phien.CoQuyen(VaiTro.QuanTriVien, VaiTro.NhanVienKho);
 
-    private void FrmChinh_Load(object sender, EventArgs e)
+    private async void FrmChinh_Load(object sender, EventArgs e)
     {
         var nd = _phien.NguoiDung!;
         lblNguoiDung.Text = $"Người dùng: {nd.HoTen} ({nd.TenDangNhap})";
@@ -43,6 +44,11 @@ public partial class FrmChinh : Form
         ChuDe.KieuMenu(menuStrip, statusStrip);
         TaoThanhDieuHuong();
         MoTongQuan();
+        if (LaBanHang)
+        {
+            await KiemTraDonMoiAsync();
+            tmrKiemTraDon.Start();
+        }
     }
 
     /// <summary>
@@ -175,10 +181,25 @@ public partial class FrmChinh : Form
 
     // ------------------------- Báo đơn mới từ website -------------------------
 
+    private async Task KiemTraDonMoiAsync()
+    {
+        using var scope = _scopes.CreateScope();
+        var tq = await scope.ServiceProvider.GetRequiredService<IBaoCaoService>().TongQuanAsync(_phien.MaTaiKhoan);
+        int soDon = tq.DonChoXacNhan;
+        lblDonCho.Text = soDon > 0 ? $"🔔 {soDon} đơn chờ xác nhận – nhấp để xử lý" : "Không có đơn chờ xác nhận";
+        lblDonCho.ForeColor = soDon > 0 ? Color.Firebrick : Color.DimGray;
+        if (_soDonChoTruoc is int truoc && soDon > truoc)
+        {
+            System.Media.SystemSounds.Asterisk.Play();
+            lblDonCho.Text = $"🔔 Có {soDon - truoc} đơn MỚI từ website · {soDon} đơn chờ xác nhận – nhấp để xử lý";
+        }
+        _soDonChoTruoc = soDon;
+    }
+
     private async void tmrKiemTraDon_Tick(object? sender, EventArgs e)
     {
-        // Báo đơn mới từ website: làm sau khi có BaoCaoService
-        await Task.CompletedTask;
+        try { await KiemTraDonMoiAsync(); }
+        catch (Exception ex) { _log.LogWarning(ex, "Kiểm tra đơn mới thất bại"); }
     }
 
     private void lblDonCho_Click(object? sender, EventArgs e)
